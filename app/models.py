@@ -1,5 +1,7 @@
 from django.db import models
 
+
+
 class Post(models.Model):
     title = models.CharField(max_length=100)
     body = models.TextField()
@@ -8,3 +10,6 @@ class Post(models.Model):
     
     def __str__(self):
         return self.title # возвращает заголовки постов, если поставить self .body вернется тело поста
+    
+    def snippet(self):
+        return self.body[:30] + '...'

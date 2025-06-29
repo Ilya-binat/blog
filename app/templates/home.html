@@ -27,16 +27,18 @@
     </header>
     <main>
         <div class="container">
+            {% for post in posts %}
             <a class="post" href="">
                 <div>
-                    <div class="title">Заголовок</div>
+                    <div class="title">{{post.title}}</div>
                     <div class="author">Опубликовано: Автор</div>
                 </div>
                 <div>
-                    <div class="text">Описание...</div>
-                    <div class="date">Дата добавления</div>
+                    <div class="text">{{post.snippet}}</div>
+                    <div class="date">{{post.created_at|date:"d-m-Y"}}</div>
                 </div>
             </a>
+            {% endfor %}
         </div>
 
     </main>
