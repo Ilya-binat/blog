@@ -2,5 +2,6 @@ from django.urls import path # импортирование функции path 
 from .views import * # импортирование функций из views.py. стандартная функция всегда выполняем
 
 urlpatterns = [
-    path ('', home, name = 'home') # создали главную страницу
+    path ('', home, name = 'home'), # создали главную страницу
+    path ('post/<int:pk>/', post, name = 'post'),
 ]
