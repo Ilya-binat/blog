@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect # идет по умолчанию
 
 from.models import Post
 
-
+from .forms import PostForm
 
 def home(request):
     posts = Post.objects.all()
@@ -14,7 +14,12 @@ def post(request, pk):
     return render(request, 'post.html', {'post':post_detail})
 
 
-
+def create_post(request):
+    form = PostForm(request.POST)
+    if form.is_valid():
+        form.save()
+        return redirect('app:home')
+    return render(request, 'create_post.html', {'form':PostForm})
 
 
 

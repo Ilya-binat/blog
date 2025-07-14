@@ -12,13 +12,13 @@
     <header>
         <nav class="navbar">
             <div class="navbar-start">
-                <a class="navbar-logo" href="">
+                <a class="navbar-logo" href="{% url 'app:home' %}">
                     <img src="https://msk.top-academy.ru/dist/images/logo/step_logo_rus.svg" alt="" />
                 </a>
             </div>
             <div class="navbar-menu">
                 <div class="navbar-item">
-                    <a class="button" href="">
+                    <a class="button" href="{% url 'app:create_post' %}">
                         Создать пост
                     </a>
                 </div>
@@ -28,7 +28,7 @@
     <main>
         <div class="container">
             {% for post in posts %}
-            <a class="post" href="">
+            <a class="post" href="{% url 'app:post' post.id %}">
                 <div>
                     <div class="title">{{post.title}}</div>
                     <div class="author">Опубликовано: Автор</div>

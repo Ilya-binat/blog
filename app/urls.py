@@ -4,4 +4,5 @@ from .views import * # импортирование функций из views.py
 urlpatterns = [
     path ('', home, name = 'home'), # создали главную страницу
     path ('post/<int:pk>/', post, name = 'post'),
+    path('create_post/', create_post, name = 'create_post'),
 ]
