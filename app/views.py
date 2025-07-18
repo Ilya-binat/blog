@@ -21,6 +21,14 @@ def create_post(request):
         return redirect('app:home')
     return render(request, 'create_post.html', {'form':PostForm})
 
+def post_delete(request, pk):
+    post = Post.objects.get(pk=pk)
+    if request.method == 'POST':
+        post.delete()
+        return redirect('app:home')
+      
+    return render(request, 'post_delete.html',{'post':post})
+
 
 
 # Create your views here.

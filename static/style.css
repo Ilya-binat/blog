@@ -1,157 +1,563 @@
 @import url("https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&family=SUSE:wght@100..800&display=swap");
 
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: "Open Sans", sans-serif;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Open Sans", sans-serif;
 }
 
 body {
-    height: 100vh;
-    background: #f5f5dc;
+  height: 100vh;
+  background: #f5f5dc;
 }
 
 .navbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px;
-    height: 10vh;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  height: 10vh;
+}
+
+.navbar-menu {
+  display: flex;
+  gap: 10px;
 }
 
 .navbar-start {
-    width: 5%;
-    cursor: pointer;
+  width: 5%;
+  cursor: pointer;
 }
 
 .navbar-start img {
-    width: 100%;
+  width: 100%;
 }
 
 .navbar .button {
-    padding: 10px 20px;
-    border: 1px solid lightgrey;
-    background: white;
-    border-radius: 5px;
-    cursor: pointer;
-    color: black;
-    text-decoration: none;
+  padding: 10px 20px;
+  border: 1px solid lightgrey;
+  border-radius: 5px;
+  cursor: pointer;
+  color: black;
+  text-decoration: none;
 }
 
 .navbar .button:active {
-    box-shadow: 0 0 5px 1px lightgrey;
+  box-shadow: 0 0 5px 1px lightgrey;
 }
 
 main {
-    height: 90vh;
+  height: 90vh;
 }
 
 .container {
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    align-content: center;
-    gap: 20px;
-    flex-wrap: wrap;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
 }
 
 .post {
-    background: white;
-    padding: 20px;
-    width: 25%;
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    gap: 30px;
-    border-radius: 15px;
-    cursor: pointer;
-    transition: 0.5s;
-    box-shadow: rgba(166, 166, 166, 0.35) 0px 5px 15px;
-    text-decoration: none;
-    color: black;
+  background: white;
+  padding: 20px;
+  width: 25%;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  border-radius: 15px;
+  cursor: pointer;
+  transition: 0.5s;
+  box-shadow: rgba(166, 166, 166, 0.35) 0px 5px 15px;
+  text-decoration: none;
+  color: black;
 }
 
 .post:hover {
-    transform: scale(1.05);
+  transform: scale(1.05);
 }
 
 .container .title {
-    font-weight: bold;
-    font-size: 2rem;
+  font-weight: bold;
+  font-size: 2rem;
 }
 
 .author,
 .date {
-    color: grey;
+  color: grey;
 }
 
 .post-container {
-    width: 80%;
-    margin: auto;
-    padding-top: 30px;
+  width: 80%;
+  margin: auto;
+  padding-top: 30px;
 }
 
 .post-container .title {
-    font-size: 50px;
-    font-weight: bold;
+  font-size: 50px;
+  font-weight: bold;
 }
 
 .post-container .info {
-    color: grey;
-    font-style: italic;
+  color: grey;
+  font-style: italic;
 }
 
 .post-container .image {
-    width: 100%;
-    margin: 20px 0;
+  width: 100%;
+  margin: 20px 0;
 }
 
 .post-container .image img {
-    width: 100%;
+  width: 100%;
 }
 
 .post-container .post-body {
-    font-size: 20px;
-    line-height: 1.5;
+  font-size: 20px;
+  line-height: 1.5;
 }
 
 .form {
-    height: 90vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  height: 90vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 form {
-    background: white;
-    border-radius: 20px;
-    padding: 30px;
-    box-shadow: 0 0 20px #d6d6d6;
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
+  background: white;
+  border-radius: 20px;
+  padding: 30px;
+  box-shadow: 0 0 20px #d6d6d6;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  min-width: 30vw;
 }
 
 .field input[type="text"],
+.field input[type="password"],
 .field textarea {
-    width: 100%;
-    border: 1px solid lightgrey;
-    border-radius: 3px;
-    outline: none;
-    padding: 0 10px;
+  width: 100%;
+  border: 1px solid lightgrey;
+  border-radius: 3px;
+  outline: none;
+  padding: 0 10px;
 }
 
-.field input[type="text"] {
-    height: 35px;
+.field input[type="text"],
+.field input[type="password"] {
+  height: 35px;
 }
 
 form button {
-    height: 35px;
-    background: rgb(26, 191, 26);
-    border: none;
-    color: white;
-    border-radius: 3px;
-    cursor: pointer;
+  height: 35px;
+  background: rgb(26, 191, 26);
+  border: none;
+  color: white;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.buttons .button {
+  border: 1px solid lightgrey;
+  padding: 5px 10px;
+  font-size: 18px;
+  border-radius: 5px;
+  transition: 0.5s;
+  cursor: pointer;
+  height: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.buttons {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+}
+
+.primary {
+  background: rgb(26, 191, 26);
+  color: white !important;
+}
+
+.danger {
+  background: red;
+  color: white !important;
+}
+
+.buttons .button:active {
+  box-shadow: 0 0 5px 1px lightgrey;
+}
+
+.danger:hover {
+  background: darkred;
+}
+
+.primary:hover {
+  background: darkgreen;
+}
+
+form .title {
+  font-size: 25px;
+  text-align: center;
+}
+
+.flex-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flex-container .image {
+  width: 40vw;
+  padding: 50px;
+}
+
+.flex-container .image img {
+  width: 100%;
+}
+
+.flex-container .text {
+  width: 30vw;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.flex-container .text .title {
+  font-size: 30px;
+}
+
+.flex-container .button {
+  background: rgb(26, 191, 26);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  text-decoration: none;
+  font-size: 20px;
+  text-align: center;
+}
+
+.redirect {
+  text-align: right;
+}
+
+.redirect a {
+  text-decoration: none;
+  color: black;
+  cursor: pointer;
+}
+
+.redirect a:hover {
+  text-decoration: underline;
+}
+
+.comments {
+  padding: 30px 0;
+  background: none;
+  box-shadow: none;
+}
+
+.comments .input {
+  width: 100%;
+  height: 5vh;
+  border: 1px solid lightgrey;
+  border-radius: 5px;
+  padding: 0 10px;
+  font-size: 18px;
+}
+
+.comments .title {
+  font-size: 25px;
+  text-align: center;
+  padding: 20px 0;
+}
+
+.comment {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  border: 1px solid lightgrey;
+  width: 20vw;
+  height: 250px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.comment-head,
+.comment-body,
+.comment-footer,
+.user-data {
+  display: flex;
+}
+
+.comment .avatar {
+  width: 15%;
+}
+
+.comment img {
+  width: 100%;
+}
+
+.comment-head {
+  gap: 20px;
+}
+
+.user-data {
+  gap: 10px;
+}
+
+.user-data .date {
+  font-size: 12px;
+}
+
+.comment-body {
+  padding: 20px 0;
+}
+
+.comment .btn {
+  color: black;
+  border: 1px solid lightgrey;
+  padding: 10px;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+}
+
+.comment-footer {
+  gap: 20px;
+  align-items: center;
+}
+
+.reply:hover {
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.comments-list {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+}
+
+.comment-buttons {
+  display: flex;
+  justify-content: right;
+  gap: 20px;
+}
+
+.comment-button {
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.edited {
+  text-align: right;
+  font-size: 12px;
+  color: lightgrey;
+}
+
+.post-buttons {
+  display: flex;
+  gap: 20px;
+  padding: 20px 0;
+}
+
+.post-button {
+  padding: 15px;
+  color: black;
+  border: 1px solid lightgrey;
+  border-radius: 5px;
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+}
+
+.reply {
+  text-decoration: none;
+  color: black;
+}
+
+.is-reply {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  color: grey;
+}
+
+.comment-body {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.comment-body a {
+  border: 1px solid lightgrey;
+  padding: 5px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 12px;
+  text-decoration: none;
+  color: grey;
+}
+
+.block {
+  width: 97%;
+  height: 95%;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 0 10px #f3f3f3;
+  border: 1px solid lightgrey;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  font-size: 20px;
+}
+.parent-block {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+.block .button {
+  padding: 10px 20px;
+  border: 1px solid lightgrey;
+  font-size: 16px;
+  border-radius: 5px;
+  color: black;
+  cursor: pointer;
+  text-decoration: none;
+  width: 150px;
+}
+.block > .button {
+  background: lightgrey;
+}
+.block .buttons .button:first-child {
+  background: lightblue;
+}
+.block .buttons .button:last-child {
+  background: lightsteelblue;
+}
+.block .buttons {
+  justify-content: left;
+}
+.pagination-buttons {
+  display: flex;
+  justify-content: space-around;
+  padding: 50px 0;
+}
+.pagination-buttons .button {
+  border: 1px solid lightgrey;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  text-decoration: none;
+  color: black;
+  background: white;
+}
+.pagination-buttons .current-page {
+  font-size: 25px;
+  font-weight: bold;
+}
+.previous,
+.next {
+  display: flex;
+  gap: 10px;
+}
+
+.home-container {
+  display: flex;
+  flex-wrap: wrap;
+  margin: auto;
+  gap: 20px;
+  justify-content: center;
+  padding: 50px 0;
+}
+.home-container .title {
+  font-weight: bold;
+  font-size: 25px;
+}
+
+.show-more {
+  text-align: center;
+  padding: 50px 0;
+}
+.show-more .button {
+  padding: 10px 20px;
+  border: none;
+  font-size: 16px;
+  border-radius: 5px;
+  color: white;
+  cursor: pointer;
+  text-decoration: none;
+}
+.to-start {
+  width: 50px;
+  height: 50px;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: lightgrey;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 20px;
+  color: black;
+  cursor: pointer;
+}
+
+.post-statistics {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  color: grey;
+}
+.stat {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.navbar-item form {
+  background: none;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+  margin: 0;
+  min-width: auto;
+}
+.navbar-item form input {
+  height: 45px;
+  border: 1px solid lightgrey;
+  border-radius: 5px;
+  padding: 0 10px;
+  outline: none;
+}
+.navbar-menu {
+  align-items: center;
 }

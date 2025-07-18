@@ -1,47 +1,17 @@
-{% load static %}
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
-    <link rel="stylesheet" href="{% static 'style.css' %}" />
-</head>
-
-<body>
-    <header>
-        <nav class="navbar">
-            <div class="navbar-start">
-                <a class="navbar-logo" href="{% url 'app:home' %}">
-                    <img src="https://msk.top-academy.ru/dist/images/logo/step_logo_rus.svg" alt="" />
-                </a>
-            </div>
-            <div class="navbar-menu">
-                <div class="navbar-item">
-                    <a class="button" href="{% url 'app:create_post' %}">
-                        Создать пост
-                    </a>
-                </div>
-            </div>
-        </nav>
-    </header>
-    <main>
-        <div class="container">
-            {% for post in posts %}
-            <a class="post" href="{% url 'app:post' post.id %}">
-                <div>
-                    <div class="title">{{post.title}}</div>
-                    <div class="author">Опубликовано: Автор</div>
-                </div>
-                <div>
-                    <div class="text">{{post.snippet}}</div>
-                    <div class="date">{{post.created_at|date:"d-m-Y"}}</div>
-                </div>
-            </a>
-            {% endfor %}
+{% extends 'layout.html' %}
+{% block content %}
+<div class="container">
+    {% for post in posts %}
+    <a class="post" href="{% url 'app:post' post.id %}">
+        <div>
+            <div class="title">{{post.title}}</div>
+            <div class="author">Опубликовано: Автор</div>
         </div>
-
-    </main>
-</body>
-
-</html>
+        <div>
+            <div class="text">{{post.snippet}}</div>
+            <div class="date">{{post.created_at|date:"d-m-Y"}}</div>
+        </div>
+    </a>
+    {% endfor %}
+</div>
+{% endblock %}
