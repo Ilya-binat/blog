@@ -7,7 +7,7 @@
     <div class="info">{{post.created_at|date:"d-m-Y"}}</div>
    </div>
    <div class="buttons">
-    <a class = 'button primary'href="">
+    <a class = 'button primary'href="{% url 'app:edit_post' post.pk %}">
       <ion-icon name="create-outline"></ion-icon>
     </a>
     <a class='button danger'href="{% url 'app:post_delete' post.pk %}">
