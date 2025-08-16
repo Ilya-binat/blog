@@ -9,7 +9,7 @@ class LoginForm(AuthenticationForm):
         widget=forms.TextInput(attrs={'autofocus':True,'placeholder':'Login'})
     )
     password = forms.CharField(
-        widget=forms.PasswordInput(attrs={'placeholder':'Password'})
+        widget=forms.PasswordInput(attrs={'placeholder':'Password', 'class':'password'})
     )
     class Meta:
         model = User
@@ -21,10 +21,10 @@ class RegisterForm(UserCreationForm):
         widget=forms.TextInput(attrs={'autofocus':True, 'placeholder':'Create username'})
     )
     password1 = forms.CharField(
-        widget=forms.PasswordInput(attrs={'placeholder':'Create password'})
+        widget=forms.PasswordInput(attrs={'placeholder':'Create password', 'class':'password'})
     )
     password2 = forms.CharField(
-        widget=forms.PasswordInput(attrs={'placeholder':'Confirm password'})
+        widget=forms.PasswordInput(attrs={'placeholder':'Confirm password','class':'password'})
     )
     class Meta:
         model = User

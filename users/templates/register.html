@@ -15,6 +15,10 @@
             {% endif %}
         </div>
         {% endfor %}
+        <label for="" >
+            <input type="checkbox" id="togglePassword">
+           Показать пароль
+        </label>
         <button>Зарегестрироваться</button>
         {% if form.non_field_errors %}
         <div class="form-errors">
@@ -28,4 +32,12 @@
         {% endif %}
     </form>
 </div>
+<script>
+    document.getElementById('togglePassword').addEventListener('change', function () {
+        let passwordFields = document.querySelectorAll('.password');
+        passwordFields.forEach(field => {
+            field.type = this.checked ? 'text' : 'password';
+        });
+    });
+</script>
 {% endblock %}

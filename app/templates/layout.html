@@ -25,16 +25,19 @@
                 </a>
             </div>
             <div class="navbar-menu">
+                {% if user.is_authenticated %}
                 <div class="navbar-item">
                     <a class="button" href="{% url 'app:create_post' %}">
                         Создать пост
                     </a>
                 </div>
+                {% endif %}
                 <div class="navbar-item">
                     {% if user.is_authenticated %}
                     <a href="{% url 'users:log_out' %}" class="button danger" >Выйти</a>
                     {% else %}
                     <a href="{% url 'users:log_in' %}" class="button success" >Войти</a>
+                    <a href="{% url 'users:register' %}" class="button info" >Создать аккаунт</a>
                     {% endif %}
             
                     
