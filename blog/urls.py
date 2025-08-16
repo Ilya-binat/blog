@@ -8,6 +8,7 @@ from django.conf import settings
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("", include(("app.urls", "app"), namespace="app")),
+    path("users/", include(("users.urls", "users"), namespace = "users"))
 ]
 urlpatterns += staticfiles_urlpatterns() # Встроенная в  django функция которая найдет в settings.py адресс папки со статичными файлами 
 #и настроит открытие этих файлов через браузер. 

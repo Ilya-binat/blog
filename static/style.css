@@ -561,3 +561,13 @@ form .title {
 .navbar-menu {
   align-items: center;
 }
+
+.success {
+  background: green;
+  color: white !important;
+}
+
+.danger {
+  background: red;
+  color: white !important;
+}
