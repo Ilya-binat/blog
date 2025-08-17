@@ -3,7 +3,13 @@ from django.urls import path, include # include - соединяет два ро
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.conf.urls.static import static
 from django.conf import settings
+from django.conf.urls import handler404 #Функция которая показывает страницу 404 по умолчанию
+from django.shortcuts import render
 
+def custom_404(request, exception):
+    return render(request, '404.html', status=404) #Кастомная функция которая показывает 
+# Подготовленную странницу 404
+handler404=custom_404
 
 urlpatterns = [
     path("admin/", admin.site.urls),

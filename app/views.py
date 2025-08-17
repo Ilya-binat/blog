@@ -1,8 +1,14 @@
 from django.shortcuts import render, redirect # идет по умолчанию
 
+from django.shortcuts import get_object_or_404# Точно такой же метод получения поста из базы
+#который в дополнение переведет пользователя на 404 страницу если пост не будет найден
+
 from.models import Post
 
 from .forms import PostForm
+
+from django.contrib.auth.decorators import login_required #Декаратор - специальная функция обертка которая делает проверку
+# Перед выполнение основной функции. В данном случае выполняется проверка авторизации
 
 
 # GET запрос - нужен только для вывода информации. на пример вытащить список постов или один пост
@@ -26,29 +32,39 @@ def home(request):
 
 
 def post(request, pk):
-    post_detail = Post.objects.get(pk=pk)
+    post_detail = get_object_or_404(Post, pk=pk)
     return render(request, 'post.html', {'post':post_detail})
 
-
+@login_required(login_url="users:log_in")# Установили декаратор для проверки авторизации перед созданием поста
 def create_post(request):
     form = PostForm(request.POST)
     if form.is_valid():
-        form.save()
+        post = form.save(commit = False) # Вытаскиваем информацию из  формы без сохраненя в БД
+        post.author=request.user # Сохраняем автором пользователя который отправил запрос
+        post.save() # Сохранение поста в базе
         return redirect('app:home')
     return render(request, 'create_post.html', {'form':PostForm})
 
+@login_required(login_url="users:log_in")
 def post_delete(request, pk):
     post = Post.objects.get(pk=pk)
+    if post.author != request.user:
+        return redirect('users:log_in')
+    
     if request.method == 'POST':
         post.delete()
         return redirect('app:home')
       
     return render(request, 'post_delete.html',{'post':post})
 
+@login_required(login_url="users:log_in")
 def edit_post(request, pk):
     post = Post.objects.get(pk=pk) # поиск нужного поста в базе с помощью функции get()
     form = PostForm(request.POST or None, instance=post) # Передаем информацию поста в форму. request.POST or None
      #передается для того чтобы, мы могли увидеть форму с информацией поста и могли этот пост тут же изменить.
+    if post.author != request.user:
+        return redirect('users:log_in') # Поставили условие, которое возвращает нас на страницу 
+    #входа если пользователь пытается отредактироать не свой пост
     
     if request.method == 'POST':
         form.save()

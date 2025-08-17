@@ -5,7 +5,7 @@
     <a class="post" href="{% url 'app:post' post.id %}">
         <div>
             <div class="title">{{post.title}}</div>
-            <div class="author">Опубликовано: Автор</div>
+            <div class="author">Опубликовано: {{post.author}}</div>
         </div>
         <div>
             <div class="text">{{post.snippet}}</div>
