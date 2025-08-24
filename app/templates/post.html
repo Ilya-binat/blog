@@ -22,6 +22,19 @@
       <img src="{{post.image.url}}" alt="" />
     </div>
     <div class="post-body">{{post.body}}</div>
+    <hr />
+
+    <form class="comments" method="post" action="{% url 'app:comment_create' %}">
+      {% csrf_token %}
+      {% for field in form %}
+      {{field}}
+      {% endfor %}
+      <input type="hidden" name="post" value="{{post.pk}}">
+      <div class="comments-list">
+        <div class="title">Пока нет комментариев</div>
+      </div>
+    </form>
+   
   </div>
   {% endblock %}
 

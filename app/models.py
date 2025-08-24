@@ -9,6 +9,7 @@ class Post(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     image = models.ImageField(blank=True, default = 'project_blog.png')
     author = models.ForeignKey(User, on_delete=models.CASCADE, default=1)# добавили поля автора для привезки его к посту 
+
     
     
     def __str__(self):
@@ -16,3 +17,16 @@ class Post(models.Model):
     
     def snippet(self):
         return self.body[:30] + '...'
+    
+
+class Comment(models.Model):
+    body = models.TextField()
+    created_at= models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    author = models.ForeignKey(User, on_delete = models.CASCADE, default = 1)
+    post = models.ForeignKey(Post, on_delete= models.CASCADE)
+
+    def __str__(self):
+        return self.body
+
+    

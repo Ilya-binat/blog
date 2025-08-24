@@ -3,9 +3,11 @@ from django.shortcuts import render, redirect # идет по умолчанию
 from django.shortcuts import get_object_or_404# Точно такой же метод получения поста из базы
 #который в дополнение переведет пользователя на 404 страницу если пост не будет найден
 
-from.models import Post
+from.models import Post, Comment
 
-from .forms import PostForm
+from .forms import PostForm, CommentForm
+
+from django.http import HttpResponse
 
 from django.contrib.auth.decorators import login_required #Декаратор - специальная функция обертка которая делает проверку
 # Перед выполнение основной функции. В данном случае выполняется проверка авторизации
@@ -33,7 +35,8 @@ def home(request):
 
 def post(request, pk):
     post_detail = get_object_or_404(Post, pk=pk)
-    return render(request, 'post.html', {'post':post_detail})
+    form = CommentForm()# создали переменную form в которую передали форму для создания комментария
+    return render(request, 'post.html', {'post':post_detail, 'form':form})# Для работы формы создания комментариев мы добавили GET запрос
 
 @login_required(login_url="users:log_in")# Установили декаратор для проверки авторизации перед созданием поста
 def create_post(request):
@@ -70,6 +73,21 @@ def edit_post(request, pk):
         form.save()
         return redirect('app:post', pk=pk)
     return render(request, 'create_post.html', {'form':form})
+
+
+def comment_create(request):
+    form = CommentForm(request.POST)
+
+    if form.is_valid():
+        post_data = get_object_or_404(Post, pk=request.POST['post'])
+        comment = form.save(commit=False)
+        comment.author = request.user
+        comment.post = post_data
+        comment.save()
+
+        return redirect('app:post', pk=request.POST['post'])
+        
+       
 
 
 

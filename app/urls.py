@@ -6,5 +6,7 @@ urlpatterns = [
     path ('post/<int:pk>/', post, name = 'post'),
     path('create_post/', create_post, name = 'create_post'),
     path('post_delete/<int:pk>/', post_delete, name = 'post_delete'),
-    path('edit_post/<int:pk>/', edit_post, name = 'edit_post')
+    path('edit_post/<int:pk>/', edit_post, name = 'edit_post'),
+    path('comment_create/', comment_create, name = 'comment_create')
+  
 ]
