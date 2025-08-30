@@ -30,8 +30,43 @@
       {{field}}
       {% endfor %}
       <input type="hidden" name="post" value="{{post.pk}}">
+      <div class="title">Пока нет комментариев</div>
       <div class="comments-list">
-        <div class="title">Пока нет комментариев</div>
+        
+        {% for comment in post.comment_set.all %}
+
+        <div class="comment">
+          <div class="comment-head">
+            <div class="avatar">
+              <img src="https://cdn-icons-png.flaticon.com/512/6596/6596121.png" alt="">
+            </div>
+            <div class="user-data">
+              <div class="username">
+                {{comment.author.username}}
+              </div>
+              <div class="date">
+                {{comment.created_at|date:"d.m.Y h:i"}}  
+              </div>
+            </div>
+          </div>
+          <div class="comment-body">
+            {{comment.body}}
+          </div>
+          <div class="comment-footer">
+            <div class="buttons">
+               <button class="btn">
+                <ion-icon name="thumbs-up-outline"></ion-icon>
+               </button>
+               <button class="btn">
+                <ion-icon name="thumbs-down-outline"></ion-icon>
+               </button>
+            </div>
+            <div class="reply">
+              Ответить 
+            </div>
+          </div>
+        </div>
+        {% endfor %}
       </div>
     </form>
    
@@ -55,3 +90,8 @@
 
   <!-- Поставиили условие проверки совпадение автора и пользователя. Пользователь должен 
   редактировать только свой пост -->
+
+  <!-- {{comment.created_at|date:"d.m.Y h:i"}} - Форматирование даты и добавление времени -->
+
+  <!--  <input type="hidden" name="post" value="{{post.pk}}"> - Это скрытый input который сохраняет  
+    id поста под которым пишется комментарий  -->

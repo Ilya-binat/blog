@@ -80,7 +80,7 @@ def comment_create(request):
 
     if form.is_valid():
         post_data = get_object_or_404(Post, pk=request.POST['post'])
-        comment = form.save(commit=False)
+        comment = form.save(commit=False)# приостанавливаем сохранение комментариев, чтобы указать автора и пост
         comment.author = request.user
         comment.post = post_data
         comment.save()

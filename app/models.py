@@ -22,7 +22,7 @@ class Post(models.Model):
 class Comment(models.Model):
     body = models.TextField()
     created_at= models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    updated_at = models.DateTimeField(auto_now=True)# DateTimeField Сохраняет при добавление комментария дату и время. 
     author = models.ForeignKey(User, on_delete = models.CASCADE, default = 1)
     post = models.ForeignKey(Post, on_delete= models.CASCADE)
 

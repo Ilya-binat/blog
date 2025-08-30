@@ -593,3 +593,83 @@ form .title {
   text-align: center;
   padding: 20px 0;
  } 
+
+ .comment {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  border: 1px solid lightgrey;
+  width: 20vw;
+  height: 250px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+
+
+
+.comment .btn {
+  color: black;
+  border: 1px solid lightgrey;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+
+.comment-head,
+.comment-body,
+.comment-footer,
+.user-data {
+  display: flex;
+}
+
+
+.comment .avatar {
+  width: 15%;
+}
+
+
+.comment img {
+  width: 100%;
+}
+
+
+.comment-head {
+  gap: 20px;
+}
+
+
+.user-data {
+  gap: 10px;
+}
+
+
+.user-data .date {
+  font-size: 12px;
+}
+
+
+.comment-body {
+  padding: 20px 0;
+}
+
+
+.comment .btn {
+  background: none !important;
+  color: grey;
+  border: 1px solid lightgrey;
+  padding: 10px;
+}
+
+
+.comment-footer {
+  gap: 20px;
+  align-items: center;
+}
+
+
+.reply:hover {
+  cursor: pointer;
+  font-weight: bold;
+}
