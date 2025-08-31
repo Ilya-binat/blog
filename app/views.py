@@ -52,7 +52,7 @@ def create_post(request):
 def post_delete(request, pk):
     post = Post.objects.get(pk=pk)
     if post.author != request.user:
-        return redirect('users:log_in')
+        return render(request, '403.html')
     
     if request.method == 'POST':
         post.delete()
@@ -66,7 +66,7 @@ def edit_post(request, pk):
     form = PostForm(request.POST or None, instance=post) # Передаем информацию поста в форму. request.POST or None
      #передается для того чтобы, мы могли увидеть форму с информацией поста и могли этот пост тут же изменить.
     if post.author != request.user:
-        return redirect('users:log_in') # Поставили условие, которое возвращает нас на страницу 
+        return render(request,'403.html') # Поставили условие, которое возвращает нас на страницу 
     #входа если пользователь пытается отредактироать не свой пост
     
     if request.method == 'POST':
@@ -88,6 +88,18 @@ def comment_create(request):
         return redirect('app:post', pk=request.POST['post'])
         
        
+@login_required(login_url='users:log_in')
+def comment_delete(request, pk):
+    comment = Comment.objects.get(pk=pk)
+
+    if request.user != comment.author:
+        return render(request, '403.html')
+
+
+    if request.method == 'POST':
+        comment.delete()
+        return redirect('app:post', pk=comment.post.pk)#достаем первичный ключ поста под которым был написан этот комментарий
+    return render(request, 'comment_delete.html', {'comment':comment})
 
 
 

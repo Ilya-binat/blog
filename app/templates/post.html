@@ -36,6 +36,16 @@
         {% for comment in post.comment_set.all %}
 
         <div class="comment">
+          {% if user == comment.author %}
+          <div class="comment-buttons">
+            <a href="" class="comment-button primary" >
+              <ion-icon name="create-outline"></ion-icon>
+            </a>
+            <a href="{% url 'app:comment_delete' comment.pk %}" class="comment-button danger">
+              <ion-icon name="trash-outline"></ion-icon>
+            </a>
+          </div>
+          {% endif %}
           <div class="comment-head">
             <div class="avatar">
               <img src="https://cdn-icons-png.flaticon.com/512/6596/6596121.png" alt="">

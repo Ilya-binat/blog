@@ -196,6 +196,7 @@ form button {
 .danger {
   background: red;
   color: white !important;
+  text-decoration: none;
 }
 
 .buttons .button:active {
@@ -672,4 +673,16 @@ form .title {
 .reply:hover {
   cursor: pointer;
   font-weight: bold;
+}
+
+.comment-buttons {
+  display: flex;
+  justify-content: right;
+  gap: 20px;
+}
+
+
+.comment-button {
+  padding: 10px;
+  border-radius: 5px;
 }
