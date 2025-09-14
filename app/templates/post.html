@@ -75,12 +75,14 @@
           </div>
           <div class="comment-footer">
             <div class="buttons">
-               <button class="btn">
+               <a href="{% url 'app:comment_like' comment.pk %}" class="btn {% if user in comment.likes.all %} primary {% endif %}">
                 <ion-icon name="thumbs-up-outline"></ion-icon>
-               </button>
-               <button class="btn">
+                <i>{{comment.likes.count}}</i>
+               </a>
+               <a href="{% url 'app:comment_dislike' comment.pk %}" class="btn {% if user in comment.dislikes.all %} danger {% endif %}">
                 <ion-icon name="thumbs-down-outline"></ion-icon>
-               </button>
+                <i>{{comment.dislikes.count}}</i>
+               </a>
             </div>
             <div class="reply">
               Ответить 

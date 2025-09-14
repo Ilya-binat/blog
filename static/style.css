@@ -189,12 +189,12 @@ form button {
 }
 
 .primary {
-  background: rgb(26, 191, 26);
+  background: rgb(26, 191, 26) !important;
   color: white !important;
 }
 
 .danger {
-  background: red;
+  background: red !important;
   color: white !important;
   text-decoration: none;
 }
@@ -657,7 +657,6 @@ form .title {
 
 
 .comment .btn {
-  background: none !important;
   color: grey;
   border: 1px solid lightgrey;
   padding: 10px;

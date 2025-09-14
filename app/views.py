@@ -118,29 +118,58 @@ def comment_edit(request, pk):
     return render(request, 'comment_edit.html', {'comment':comment, 'form':form})
     
     
-
+@login_required(login_url='users:log_in')
 def post_like(request, pk):
     post_object = Post.objects.get(pk=pk)# вытащили конкретный пост, под которым хотим оставить лайк. с соответствующим pk
     
     if request.user not in post_object.likes.all():
-        post_object.likes.add(request.user)
+        post_object.likes.add(request.user)# ставим лайк
+        post_object.dislikes.remove(request.user)# если стоит лайк убираем дизлайк
     elif request.user in post_object.likes.all():
-        post_object.likes.remove(request.user)
+        post_object.likes.remove(request.user) # Если пользователь повторно ставит лайк, то убираем лайк
+        
+
+    
     
     return redirect('app:post', pk=post_object.pk)
 
 
-    
+@login_required(login_url='users:log_in')   
 def post_dislike(request, pk):
     post_object = Post.objects.get(pk=pk)# вытащили конкретный пост, под которым хотим оставить лайк. с соответствующим pk
 
     if request.user not in post_object.dislikes.all():
-        post_object.dislikes.add(request.user)
+        post_object.dislikes.add(request.user) # Ставим дизлайк
+        post_object.likes.remove(request.user) # Если стоит лайк убираем дизлайк
     elif request.user in post_object.dislikes.all():
-        post_object.dislikes.remove(request.user)
+        post_object.dislikes.remove(request.user) # Если пользователь повторно ставит дизлайк, то убираем дизлайк
     
     return redirect('app:post', pk=post_object.pk)
 
+
+@login_required(login_url='users:log_in')
+def comment_like(request, pk):
+    comment_object = Comment.objects.get(pk=pk)
+
+    if request.user not in comment_object.likes.all():
+        comment_object.likes.add(request.user)
+        comment_object.dislikes.remove(request.user)
+    elif request.user in comment_object.likes.all():
+        comment_object.likes.remove(request.user)
+
+    return redirect('app:post', pk=comment_object.post.pk)
+
+@login_required(login_url='users:log_in')
+def comment_dislike(request, pk):
+    comment_object = Comment.objects.get(pk=pk)
+
+    if request.user not in comment_object.dislikes.all():
+        comment_object.dislikes.add(request.user)
+        comment_object.likes.remove(request.user)
+    elif request.user in comment_object.dislikes.all():
+        comment_object.dislikes.remove(request.user)
+
+    return redirect('app:post', pk=comment_object.post.pk)
 
 # Create your views here.
 
