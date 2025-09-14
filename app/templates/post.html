@@ -23,7 +23,18 @@
     </div>
     <div class="post-body">{{post.body}}</div>
     <hr />
-
+    <div class="post-buttons">
+      <a href="{% url 'app:post_like' post.pk %}" class="post-button {% if user in post.likes.all %} primary {% endif %}">
+        <ion-icon name="thumbs-up-outline"></ion-icon>
+        <i>
+         {{post.likes.count}}
+        </i>
+      </a>
+      <a href="{% url 'app:post_dislike' post.pk %}" class="post-button {% if user in post.dislikes.all %} danger {% endif %}">
+        <ion-icon name="thumbs-down-outline"></ion-icon>
+        <i>{{post.dislikes.count}}</i>
+      </a>
+    </div>
     <form class="comments" method="post" action="{% url 'app:comment_create' %}">
       {% csrf_token %}
       {% for field in form %}
@@ -38,7 +49,7 @@
         <div class="comment">
           {% if user == comment.author %}
           <div class="comment-buttons">
-            <a href="" class="comment-button primary" >
+            <a href="{% url 'app:comment_edit' comment.pk %}" class="comment-button primary" >
               <ion-icon name="create-outline"></ion-icon>
             </a>
             <a href="{% url 'app:comment_delete' comment.pk %}" class="comment-button danger">
@@ -75,6 +86,11 @@
               Ответить 
             </div>
           </div>
+          <div class="updated" style="color: lightgray; text-align: right;">
+            {% if comment.is_updated %}
+            Изменено
+            {% endif %}
+          </div>
         </div>
         {% endfor %}
       </div>
@@ -105,3 +121,10 @@
 
   <!--  <input type="hidden" name="post" value="{{post.pk}}"> - Это скрытый input который сохраняет  
     id поста под которым пишется комментарий  -->
+
+
+
+  <!--  <div class="post-buttons">
+      <a href="{% url 'app:post_like' post.pk %}" class="post-button {% if user in post.likes.all %} primary {% endif %}">
+        <ion-icon name="thumbs-up-outline"></ion-icon>  ------  кнопка лайка и функция для того что бы лайк отмечался -->
+  <!-- {{post.likes.count}} Выводит кол-во лайкнувших людей -->

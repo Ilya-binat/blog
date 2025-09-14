@@ -1,0 +1,15 @@
+{% extends 'layout.html' %}
+{% block content %} 
+<div class="container">
+<form action="" method="post">
+    {% csrf_token %}
+    {% for field in form %}
+    <div class="field">{{field}}</div>
+    {% endfor %}
+    <div class="buttons">
+        <button class="button primary" >Подтвердить</button>
+        <a href="{% url 'app:post' comment.post.pk %}" class="button danger">Отменить</a>
+    </div>
+</form>
+</div>
+{% endblock %}

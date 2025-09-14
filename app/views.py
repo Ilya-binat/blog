@@ -102,6 +102,45 @@ def comment_delete(request, pk):
     return render(request, 'comment_delete.html', {'comment':comment})
 
 
+@login_required(login_url='users:log_in')
+def comment_edit(request, pk):
+    comment = Comment.objects.get(pk=pk)
+    form = CommentForm(request.POST or None, instance = comment)# передается текущи коментарий в форме
+
+    if comment.author != request.user:
+        return render(request, '403.html')
+
+    if form.is_valid():
+        edited_comment = form.save(commit = False)
+        edited_comment.is_updated = True
+        comment.save()
+        return redirect('app:post', pk=comment.post.pk)
+    return render(request, 'comment_edit.html', {'comment':comment, 'form':form})
+    
+    
+
+def post_like(request, pk):
+    post_object = Post.objects.get(pk=pk)# вытащили конкретный пост, под которым хотим оставить лайк. с соответствующим pk
+    
+    if request.user not in post_object.likes.all():
+        post_object.likes.add(request.user)
+    elif request.user in post_object.likes.all():
+        post_object.likes.remove(request.user)
+    
+    return redirect('app:post', pk=post_object.pk)
+
+
+    
+def post_dislike(request, pk):
+    post_object = Post.objects.get(pk=pk)# вытащили конкретный пост, под которым хотим оставить лайк. с соответствующим pk
+
+    if request.user not in post_object.dislikes.all():
+        post_object.dislikes.add(request.user)
+    elif request.user in post_object.dislikes.all():
+        post_object.dislikes.remove(request.user)
+    
+    return redirect('app:post', pk=post_object.pk)
+
 
 # Create your views here.
 

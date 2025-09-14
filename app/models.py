@@ -9,7 +9,8 @@ class Post(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     image = models.ImageField(blank=True, default = 'project_blog.png')
     author = models.ForeignKey(User, on_delete=models.CASCADE, default=1)# добавили поля автора для привезки его к посту 
-
+    likes = models.ManyToManyField('auth.User', related_name='post_likes')
+    dislikes = models.ManyToManyField('auth.User', related_name = 'post_dislikes')
     
     
     def __str__(self):
@@ -25,6 +26,10 @@ class Comment(models.Model):
     updated_at = models.DateTimeField(auto_now=True)# DateTimeField Сохраняет при добавление комментария дату и время. 
     author = models.ForeignKey(User, on_delete = models.CASCADE, default = 1)
     post = models.ForeignKey(Post, on_delete= models.CASCADE)
+    is_updated = models.BooleanField(default = False)
+    likes = models.ManyToManyField('auth.User', related_name='comment_likes')
+    dislikes = models.ManyToManyField('auth.User', related_name = 'comment_dislikes')
+
 
     def __str__(self):
         return self.body
