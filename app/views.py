@@ -171,5 +171,15 @@ def comment_dislike(request, pk):
 
     return redirect('app:post', pk=comment_object.post.pk)
 
+
+@login_required(login_url='users:log_in')
+def reply(request, pk):
+    form = CommentForm(request.POST or None)
+    comment = Comment.objects.get(pk=pk) # Создали переменную, что бы можно было вернуться назад
+
+    return render(request, 'comment_edit.html', {'form':form, 'comment':comment})
+
+  
+
 # Create your views here.
 

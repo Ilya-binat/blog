@@ -29,7 +29,16 @@ class Comment(models.Model):
     is_updated = models.BooleanField(default = False)
     likes = models.ManyToManyField('auth.User', related_name='comment_likes')
     dislikes = models.ManyToManyField('auth.User', related_name = 'comment_dislikes')
-
+    parent = models.ForeignKey('self', null = True, blank = True, related_name = 'reply', on_delete = models.CASCADE)# поле в котором сохраниться ID родительского комментария
+# self - обозначает обращение к самой же модели комментария включая все поля 
+# null = True - Обозначает, что поле не обязательное, то есть может быть пустым в базе данных  
+#blank = True - Обозначает, что поле не обязательное при заполнение форм 
+# null = True - это настройка на уровне базы данных
+# blank = True - это настройка на уровне формы
+#related_name = 'reply' - Обращение к ответам комментраиев 
+# on_delete = models. CASCSDE - Означает, если удалился родительский комментарий, то удаляются все его ответы 
+#
+#
 
     def __str__(self):
         return self.body

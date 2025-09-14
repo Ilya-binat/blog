@@ -84,9 +84,9 @@
                 <i>{{comment.dislikes.count}}</i>
                </a>
             </div>
-            <div class="reply">
+            <a href="{% url 'app:reply' comment.pk %}" class="reply">
               Ответить 
-            </div>
+            </a>
           </div>
           <div class="updated" style="color: lightgray; text-align: right;">
             {% if comment.is_updated %}
