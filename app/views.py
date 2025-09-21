@@ -177,6 +177,20 @@ def reply(request, pk):
     form = CommentForm(request.POST or None)
     comment = Comment.objects.get(pk=pk) # Создали переменную, что бы можно было вернуться назад
 
+    if form.is_valid():# form это класс, is_valid - встроенный метод
+        parent_comment = Comment.objects.get(pk=pk)
+        instance = form.save(commit=False)#Приостанавливаем сохрвнение для того что бы дополнить данные 
+
+        instance.author = request.user# Указываем автора
+        instance.post = parent_comment.post# Указываем пост,он доступен через родительский комментарий
+        instance.parent = parent_comment#Указываем роителя, тоесть коментарий к которому пишем ответ
+        instance.save() # Сохраняем форму
+
+        return redirect('app:post', pk = parent_comment.post.pk)
+
+
+
+
     return render(request, 'comment_edit.html', {'form':form, 'comment':comment})
 
   

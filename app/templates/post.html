@@ -47,6 +47,7 @@
         {% for comment in post.comment_set.all %}
 
         <div class="comment">
+  
           {% if user == comment.author %}
           <div class="comment-buttons">
             <a href="{% url 'app:comment_edit' comment.pk %}" class="comment-button primary" >
@@ -71,6 +72,13 @@
             </div>
           </div>
           <div class="comment-body">
+             {% if comment.parent %}
+  
+         
+            {{comment.parent.author}},
+          
+          
+          {% endif %}
             {{comment.body}}
           </div>
           <div class="comment-footer">
