@@ -36,7 +36,9 @@ def home(request):
 def post(request, pk):
     post_detail = get_object_or_404(Post, pk=pk)
     form = CommentForm()# создали переменную form в которую передали форму для создания комментария
-    return render(request, 'post.html', {'post':post_detail, 'form':form})# Для работы формы создания комментариев мы добавили GET запрос
+    comments = Comment.objects.filter(post=post_detail.pk, parent=None)
+    replies = Comment.objects.filter()
+    return render(request, 'post.html', {'post':post_detail, 'form':form, 'comments': comments})# Для работы формы создания комментариев мы добавили GET запрос
 
 @login_required(login_url="users:log_in")# Установили декаратор для проверки авторизации перед созданием поста
 def create_post(request):
@@ -178,7 +180,11 @@ def reply(request, pk):
     comment = Comment.objects.get(pk=pk) # Создали переменную, что бы можно было вернуться назад
 
     if form.is_valid():# form это класс, is_valid - встроенный метод
-        parent_comment = Comment.objects.get(pk=pk)
+        parent_comment = comment.parent if comment.parent else comment# До этого работала функция Comment.object.get(pk=pk), которая добавляла 
+        #в качестве родителя коммент на который мы ответили. Мы заменили это на добавление, в качестве родителя только верхнего коментария
+        #с помощью условия  IF..... ELSE..... При добавление ответа мы проверяем есть ли родительский комментарий, у коментария
+        #на который мы сейчас отвечаем. Если есть, то в качестве родителя мы указываем не текущий комментарий, а его предшественника. 
+        #Если мы пишем ответ первыми, то в качестве родителя мы берем коммент, на который мы отвечаем. 
         instance = form.save(commit=False)#Приостанавливаем сохрвнение для того что бы дополнить данные 
 
         instance.author = request.user# Указываем автора

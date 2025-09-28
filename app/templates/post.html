@@ -2,20 +2,20 @@
 {% block content %}
 <div class="post-container">
   <div class="header">
-   <div>
-    <div class="title">{{post.title}}</div>
-    <div class="info">{{post.created_at|date:"d-m-Y"}}</div>
-   </div>
-   {% if post.author == user %}
-   <div class="buttons">
-    <a class = 'button primary'href="{% url 'app:edit_post' post.pk %}">
-      <ion-icon name="create-outline"></ion-icon>
-    </a>
-    <a class='button danger'href="{% url 'app:post_delete' post.pk %}">
-      <ion-icon name="trash-outline"></ion-icon>
-    </a>
-   </div>
-   {% endif %}
+    <div>
+      <div class="title">{{post.title}}</div>
+      <div class="info">{{post.created_at|date:"d-m-Y"}}</div>
+    </div>
+    {% if post.author == user %}
+    <div class="buttons">
+      <a class='button primary' href="{% url 'app:edit_post' post.pk %}">
+        <ion-icon name="create-outline"></ion-icon>
+      </a>
+      <a class='button danger' href="{% url 'app:post_delete' post.pk %}">
+        <ion-icon name="trash-outline"></ion-icon>
+      </a>
+    </div>
+    {% endif %}
   </div>
   <div>
     <div class="image">
@@ -24,13 +24,15 @@
     <div class="post-body">{{post.body}}</div>
     <hr />
     <div class="post-buttons">
-      <a href="{% url 'app:post_like' post.pk %}" class="post-button {% if user in post.likes.all %} primary {% endif %}">
+      <a href="{% url 'app:post_like' post.pk %}"
+        class="post-button {% if user in post.likes.all %} primary {% endif %}">
         <ion-icon name="thumbs-up-outline"></ion-icon>
         <i>
-         {{post.likes.count}}
+          {{post.likes.count}}
         </i>
       </a>
-      <a href="{% url 'app:post_dislike' post.pk %}" class="post-button {% if user in post.dislikes.all %} danger {% endif %}">
+      <a href="{% url 'app:post_dislike' post.pk %}"
+        class="post-button {% if user in post.dislikes.all %} danger {% endif %}">
         <ion-icon name="thumbs-down-outline"></ion-icon>
         <i>{{post.dislikes.count}}</i>
       </a>
@@ -41,75 +43,114 @@
       {{field}}
       {% endfor %}
       <input type="hidden" name="post" value="{{post.pk}}">
+      {% if not post.comment_set.all %}
       <div class="title">Пока нет комментариев</div>
+      {% else %}
       <div class="comments-list">
-        
-        {% for comment in post.comment_set.all %}
+
+        {% for comment in comments %}
 
         <div class="comment">
-  
-          {% if user == comment.author %}
-          <div class="comment-buttons">
-            <a href="{% url 'app:comment_edit' comment.pk %}" class="comment-button primary" >
-              <ion-icon name="create-outline"></ion-icon>
-            </a>
-            <a href="{% url 'app:comment_delete' comment.pk %}" class="comment-button danger">
-              <ion-icon name="trash-outline"></ion-icon>
-            </a>
+          <div class="avatar">
+            А
           </div>
-          {% endif %}
-          <div class="comment-head">
-            <div class="avatar">
-              <img src="https://cdn-icons-png.flaticon.com/512/6596/6596121.png" alt="">
-            </div>
-            <div class="user-data">
-              <div class="username">
-                {{comment.author.username}}
+          <div class="body">
+            <div class="meta">
+              <div class="name">
+                {{comment.author}}
+
               </div>
-              <div class="date">
-                {{comment.created_at|date:"d.m.Y h:i"}}  
+              <div class="date">{{comment.created_at|date:"d.m.Y"}}</div>
+              {% if user == comment.author %}
+              <div class="controls" aria-hidden="true">
+                <a href="{% url 'app:comment_edit' comment.pk %}" class="control-button">✏️</a>
+                <a href="{% url 'app:comment_delete' comment.pk %}" class="control-button">🗑️</a>
               </div>
+              {% endif %}
+
             </div>
-          </div>
-          <div class="comment-body">
-             {% if comment.parent %}
-  
-         
-            {{comment.parent.author}},
-          
-          
-          {% endif %}
-            {{comment.body}}
-          </div>
-          <div class="comment-footer">
-            <div class="buttons">
-               <a href="{% url 'app:comment_like' comment.pk %}" class="btn {% if user in comment.likes.all %} primary {% endif %}">
-                <ion-icon name="thumbs-up-outline"></ion-icon>
-                <i>{{comment.likes.count}}</i>
-               </a>
-               <a href="{% url 'app:comment_dislike' comment.pk %}" class="btn {% if user in comment.dislikes.all %} danger {% endif %}">
-                <ion-icon name="thumbs-down-outline"></ion-icon>
-                <i>{{comment.dislikes.count}}</i>
-               </a>
+            <div class="text">{{comment.body}}</div>
+            <div class="actions">
+              <a href="{% url 'app:comment_like' comment.pk %}"
+                class="control-button like {% if user in comment.likes.all %}active{% endif %}">
+                👍
+                <span>{{comment.likes.count}}</span>
+              </a>
+              <a href="{% url 'app:comment_dislike' comment.pk %}"
+                class="control-button dislike {% if user in comment.dislikes.all %}active{% endif %}">
+                👎
+                <span>{{comment.dislikes.count}}</span>
+              </a>
+              <a href="{% url 'app:reply' comment.pk %}" class="control-button small">Ответить</a>
             </div>
-            <a href="{% url 'app:reply' comment.pk %}" class="reply">
-              Ответить 
-            </a>
-          </div>
-          <div class="updated" style="color: lightgray; text-align: right;">
-            {% if comment.is_updated %}
-            Изменено
-            {% endif %}
+            <button id="{{comment.pk}}"  type="button" class="control-button reply-btn">
+              Показать ответы
+            </button>
+            <div id="comment-{{comment.pk}}" class="reply-level hidden">
+              {% for reply in comment.reply.all %}
+              <div class="comment">
+                <div class="avatar">
+                </div>
+                <div class="body">
+                  <div class="meta">
+                    <div class="name">
+                      {{reply.author}}
+
+                    </div>
+                    <div class="date">{{reply.created_at|date:"d.m.Y"}}</div>
+                    {% if user == reply.author %}
+                    <div class="controls" aria-hidden="true">
+                      <a href="{% url 'app:comment_edit' reply.pk %}" class="control-button">✏️</a>
+                      <a href="{% url 'app:comment_delete' reply.pk %}" class="control-button">🗑️</a>
+                    </div>
+                    {% endif %}
+
+                  </div>
+                  <div class="text">{{reply.body}}</div>
+                  <div class="actions">
+                    <a href="{% url 'app:comment_like' reply.pk %}"
+                      class="control-button like {% if user in reply.likes.all %}active{% endif %}">
+                      👍
+                      <span>{{reply.likes.count}}</span>
+                    </a>
+                    <a href="{% url 'app:comment_dislike' reply.pk %}"
+                      class="control-button dislike {% if user in reply.dislikes.all %}active{% endif %}">
+                      👎
+                      <span>{{reply.dislikes.count}}</span>
+                    </a>
+                    <a href="{% url 'app:reply' reply.pk %}" class="control-button small">Ответить</a>
+                  </div>
+                </div>
+              </div>
+              {% endfor %}
+            </div>
           </div>
         </div>
         {% endfor %}
       </div>
+      {% endif %}
     </form>
-   
   </div>
   {% endblock %}
 
-
+  {% block script %}
+  <script>
+   let buttons = document.querySelectorAll('.reply-btn')
+   buttons.forEach((button) => {
+    button.onclick = () => {
+     let replies = document.getElementById('comment-' + button.id)
+     if (replies.classList.contains('hidden')){
+      button.textContent = 'Скрыть ответы'
+      
+     }
+     else{
+      button.textContent = 'Показать ответы'
+     }
+     replies.classList.toggle('hidden') 
+    }
+   })
+  </script>
+  {% endblock %}
 
 
 
@@ -138,3 +179,35 @@
       <a href="{% url 'app:post_like' post.pk %}" class="post-button {% if user in post.likes.all %} primary {% endif %}">
         <ion-icon name="thumbs-up-outline"></ion-icon>  ------  кнопка лайка и функция для того что бы лайк отмечался -->
   <!-- {{post.likes.count}} Выводит кол-во лайкнувших людей -->
+
+
+
+  <!-- Кнопки показать и скрыть ответы 
+   
+
+  
+  {% block script %}
+  <script>
+   let buttons = document.querySelectorAll('.reply-btn')
+   buttons.forEach((button) => {
+    button.onclick = () => {
+     let replies = document.getElementById('comment-' + button.id)
+     if (replies.classList.contains('hidden')){
+      button.textContent = 'Скрыть ответы'
+      
+     }
+     else{
+      button.textContent = 'Показать ответы'
+     }
+     replies.classList.toggle('hidden') 
+    }
+   })
+  </script>
+  {% endblock %}
+
+
+
+  
+  
+  
+  -->
