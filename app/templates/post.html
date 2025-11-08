@@ -23,134 +23,318 @@
     </div>
     <div class="post-body">{{post.body}}</div>
     <hr />
-    <div class="post-buttons">
-      <a href="{% url 'app:post_like' post.pk %}"
-        class="post-button {% if user in post.likes.all %} primary {% endif %}">
-        <ion-icon name="thumbs-up-outline"></ion-icon>
-        <i>
-          {{post.likes.count}}
-        </i>
-      </a>
-      <a href="{% url 'app:post_dislike' post.pk %}"
-        class="post-button {% if user in post.dislikes.all %} danger {% endif %}">
-        <ion-icon name="thumbs-down-outline"></ion-icon>
-        <i>{{post.dislikes.count}}</i>
-      </a>
-    </div>
+
     <form class="comments" method="post" action="{% url 'app:comment_create' %}">
       {% csrf_token %}
       {% for field in form %}
       {{field}}
       {% endfor %}
       <input type="hidden" name="post" value="{{post.pk}}">
-      {% if not post.comment_set.all %}
+      {% if not comments %}
       <div class="title">Пока нет комментариев</div>
       {% else %}
-      <div class="comments-list">
+      {% for comment in comments%}
+      <div class="comment" id="comment-{{comment.pk}}">
+        <div class="avatar">
+          {{comment.author.username|slice:":1"|upper}}
+        </div>
+        <div class="body">
+          <div class="meta">
+            <div class="name">{{comment.author}}</div>
+            <div class="date">{{comment.created_at|date:"d-m-Y"}}</div>
+            {% if comment.author == user %}
+            <button type="button" class="control-button comment-edit" id="{{comment.pk}}">✏️</button>
+            <button type="button" class="control-button comment-delete" id="{{comment.pk}}">🗑️</button>
+            {% endif %}
 
-        {% for comment in comments %}
-
-        <div class="comment">
-          <div class="avatar">
-            А
           </div>
-          <div class="body">
-            <div class="meta">
-              <div class="name">
-                {{comment.author}}
-
+          <div class="text">{{comment.body}}</div>
+          <div class="actions">
+            <a href="{% url 'app:comment_like' comment.pk %}"
+              class="control-button like {% if user in comment.likes.all %}active{% endif %}">
+              👍
+              <span>{{comment.likes.count}}</span>
+            </a>
+            <a href="{% url 'app:comment_dislike' comment.pk %}"
+              class="control-button dislike {% if user in comment.dislikes.all %}active{% endif %}">
+              👎
+              <span>{{comment.dislikes.count}}</span>
+            </a>
+            <button type="button" class="control-button small" id="{{comment.pk}}">Ответить</button>
+          </div>
+          {% if comment.reply.count > 0 %}
+          <button class="control-button reply-btn" type="button" id="{{comment.pk}}">Показать ответы</button>
+          {% endif %}
+          <div class="reply-level hidden" id="reply-{{comment.pk}}">
+            {% for reply in comment.children.all %}
+            <div class="comment" id="comment-{{reply.pk}}">
+              <div class="avatar">
+                {{reply.author.username|slice:":1"|upper}}
               </div>
-              <div class="date">{{comment.created_at|date:"d.m.Y"}}</div>
-              {% if user == comment.author %}
-              <div class="controls" aria-hidden="true">
-                <a href="{% url 'app:comment_edit' comment.pk %}" class="control-button">✏️</a>
-                <a href="{% url 'app:comment_delete' comment.pk %}" class="control-button">🗑️</a>
-              </div>
-              {% endif %}
+              <div class="body">
+                <div class="meta">
+                  <div class="name">{{reply.author}}</div>
+                  <div class="date">{{reply.created_at|date:"d-m-Y"}}</div>
+                  {% if reply.author == user %}
+                  <button type="button" class="control-button comment-edit" id="{{reply.pk}}">✏️</button>
+                  <button type="button" class="control-button comment-delete" id="{{reply.pk}}">🗑️</button>
+                  {% endif %}
 
-            </div>
-            <div class="text">{{comment.body}}</div>
-            <div class="actions">
-              <a href="{% url 'app:comment_like' comment.pk %}"
-                class="control-button like {% if user in comment.likes.all %}active{% endif %}">
-                👍
-                <span>{{comment.likes.count}}</span>
-              </a>
-              <a href="{% url 'app:comment_dislike' comment.pk %}"
-                class="control-button dislike {% if user in comment.dislikes.all %}active{% endif %}">
-                👎
-                <span>{{comment.dislikes.count}}</span>
-              </a>
-              <a href="{% url 'app:reply' comment.pk %}" class="control-button small">Ответить</a>
-            </div>
-            <button id="{{comment.pk}}"  type="button" class="control-button reply-btn">
-              Показать ответы
-            </button>
-            <div id="comment-{{comment.pk}}" class="reply-level hidden">
-              {% for reply in comment.reply.all %}
-              <div class="comment">
-                <div class="avatar">
                 </div>
-                <div class="body">
-                  <div class="meta">
-                    <div class="name">
-                      {{reply.author}}
-
-                    </div>
-                    <div class="date">{{reply.created_at|date:"d.m.Y"}}</div>
-                    {% if user == reply.author %}
-                    <div class="controls" aria-hidden="true">
-                      <a href="{% url 'app:comment_edit' reply.pk %}" class="control-button">✏️</a>
-                      <a href="{% url 'app:comment_delete' reply.pk %}" class="control-button">🗑️</a>
-                    </div>
-                    {% endif %}
-
-                  </div>
-                  <div class="text">{{reply.body}}</div>
-                  <div class="actions">
-                    <a href="{% url 'app:comment_like' reply.pk %}"
-                      class="control-button like {% if user in reply.likes.all %}active{% endif %}">
-                      👍
-                      <span>{{reply.likes.count}}</span>
-                    </a>
-                    <a href="{% url 'app:comment_dislike' reply.pk %}"
-                      class="control-button dislike {% if user in reply.dislikes.all %}active{% endif %}">
-                      👎
-                      <span>{{reply.dislikes.count}}</span>
-                    </a>
-                    <a href="{% url 'app:reply' reply.pk %}" class="control-button small">Ответить</a>
-                  </div>
+                <div class="text">{{reply.body}}</div>
+                <div class="actions">
+                  <a href="{% url 'app:comment_like' reply.pk %}"
+                    class="control-button like {% if user in reply.likes.all %}active{% endif %}">
+                    👍
+                    <span>{{reply.likes.count}}</span>
+                  </a>
+                  <a href="{% url 'app:comment_dislike' reply.pk %}"
+                    class="control-button dislike {% if user in reply.dislikes.all %}active{% endif %}">
+                    👎
+                    <span>{{reply.dislikes.count}}</span>
+                  </a>
+                  <button type="button" class="control-button small" id="{{reply.pk}}">Ответить</button>
                 </div>
               </div>
-              {% endfor %}
             </div>
+            {% endfor %}
           </div>
         </div>
-        {% endfor %}
+
       </div>
+      {% endfor %}
       {% endif %}
+      <div class="comments-list">
+
+      </div>
+    </form>
+
+  </div>
+  <!-- Модалка редактирования -->
+  <div class="modal edit hidden">
+    <form action="" method="post">
+      <div class="modal-header">
+        <div class="modal-title">Редактирование</div>
+        <div class="modal-close">x</div>
+      </div>
+      <div class="modal-body">
+        <input type="text" class="control edit-text">
+      </div>
+      <div class="modal-footer">
+        <button class="modal-button submit" type="submit">Сохранить</button>
+        <button class="modal-button reset" type="reset">Закрыть</button>
+      </div>
+    </form>
+  </div>
+  <!-- Модалка ответа на комментарий -->
+  <div class="modal reply hidden">
+    <form class="reply-form" action="" method="post">
+      {% csrf_token %}
+      <div class="modal-header">
+        <div class="modal-title">Напишите Ваш ответ</div>
+        <div class="modal-close">x</div>
+      </div>
+      <div class="modal-body">
+
+        <input type="text" class="control reply-text">
+
+      </div>
+      <div class="modal-footer">
+        <button class="modal-button submit" type="submit">Сохранить</button>
+        <button class="modal-button reset" type="reset">Закрыть</button>
+      </div>
+    </form>
+  </div>
+  <!-- Модалка удаления -->
+  <div class="modal delete hidden">
+    <form class="comment-delete-form" method="post">
+      {% csrf_token %}
+      <div class="modal-header">
+        <div class="modal-title">Подтвердите действие</div>
+        <div class="modal-close">x</div>
+      </div>
+      <div class="modal-body">
+
+        <div class="text">Подтвердите удалеие комментария</div>
+
+      </div>
+      <div class="modal-footer">
+        <button class="modal-button submit" type="submit">Да</button>
+        <button class="modal-button reset" type="reset">Нет</button>
+      </div>
     </form>
   </div>
   {% endblock %}
-
   {% block script %}
   <script>
-   let buttons = document.querySelectorAll('.reply-btn')
-   buttons.forEach((button) => {
-    button.onclick = () => {
-     let replies = document.getElementById('comment-' + button.id)
-     if (replies.classList.contains('hidden')){
-      button.textContent = 'Скрыть ответы'
+    // модалка для удаления
+    let modal = document.querySelector('.modal.delete')
+
+    // открытие модалки удаления
+    let deleteButtons = document.querySelectorAll('.comment-delete')
+
+    deleteButtons.forEach(function (btn) {
+      btn.onclick = function () {
+        id = btn.id
+        modal.classList.remove('hidden')
+      }
+
+    })
+
+    // закрытие модалки при нажатии на крестик и кнопки "нет"
+    modal.querySelector('.modal-close').onclick = () => modal.classList.add('hidden')
+    modal.querySelector('.modal-button.reset').onclick = () => modal.classList.add('hidden')
+
+    //  удаление комментария
+    let id;
+    let commentDeleteForm = document.querySelector('.comment-delete-form')
+
+    commentDeleteForm.onsubmit = function (event) {
+      event.preventDefault()
+      console.log(id);
       
-     }
-     else{
-      button.textContent = 'Показать ответы'
-     }
-     replies.classList.toggle('hidden') 
+      fetch('/comment_delete/' + id, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': getCookie('csrftoken')// getCookie - вернет тот параметр который мы запросим, в данном случае она возвращает csrf - токен
+        },
+      })
+        .then(response => location.reload())  // promise - действия которые выполняются раз за разом.
+        .catch(error => console.log(error))
     }
-   })
+    // json - java script object notation. Превращает объект в строку.Или ввиде словарей превращенного в строку. Формат данных.
+    // Сжимет информацию и сохраняет ее. Массив нужен для того что бы сохранить порядок следования постов 
+    // словарь нужен дя удобного структурирования даных
+    //превращение в строку сжимает данные до меньшего объема
+
+    // функция поиска и возврата кукис
+    function getCookie(name) {
+      let cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let cookie of cookies) {
+          cookie = cookie.trim();
+          if (cookie.startsWith(name + '=')) {
+            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+            break;
+          }
+        }
+      }
+
+
+      return cookieValue;
+    }
+    // Блок кода для редактирования комментария 
+    let editButtons = document.querySelectorAll('.comment-edit')
+    let editModal = document.querySelector('.modal.edit')
+    let editId;
+    let editForm = editModal.querySelector('form')
+    let input = editModal.querySelector('input')
+
+    editModal.querySelector('.modal-close').onclick = () => editModal.classList.add('hidden')
+    editModal.querySelector('.modal-button.reset').onclick = () => editModal.classList.add('hidden')
+
+
+    editButtons.forEach(button => {
+      button.onclick = function () {
+
+        // console.log('Ищем комментарий с id = comment-' + button.id);
+        
+        let comment = document.querySelector('#comment-' + button.id)
+        // console.log('Найден комментарий = ', comment);
+        
+        
+        let text = comment.querySelector('.text').textContent
+        // console.log('Текст комментария - ' + text);
+
+
+
+        input.value = text
+
+        editModal.classList.remove('hidden')
+        editId = button.id
+      }
+    })
+
+    editForm.onsubmit = function (event) {
+      event.preventDefault()
+
+      const formData = new FormData();
+      formData.append('body', input.value);
+
+      fetch('/comment_edit/' + editId, {
+        method: 'POST',
+        body: formData,
+        headers: {
+
+          'X-CSRFToken': getCookie('csrftoken')// getCookie - вернет тот параметр который мы запросим, в данном случае она возвращает csrf - токен
+        },
+      })
+        .then(response => location.reload())  // promise - действия которые выполняются раз за разом.
+        .catch(error => console.log(error))
+    }
+    // Блок отвечающий за ответы на комментарии
+
+    let replyButtons = document.querySelectorAll('.small')
+    let replyModal = document.querySelector('.modal.reply')
+    let replyId;
+
+    replyModal.querySelector('.modal-close').onclick = () => replyModal.classList.add('hidden')
+    replyModal.querySelector('.modal-button.reset').onclick = () => replyModal.classList.add('hidden')
+
+    replyButtons.forEach(button => {
+      button.onclick = function () {
+        replyId = button.id
+        replyModal.classList.remove('hidden')
+      }
+    })
+    let replyForm = replyModal.querySelector('.reply-form')
+    let replyInput = replyForm.querySelector('.reply-text')
+
+    replyForm.onsubmit = function (event) {
+      event.preventDefault()
+
+      const formData = new FormData();
+      formData.append('body', replyInput.value);
+
+      fetch('/comment_reply/' + replyId, {
+        method: 'POST',
+        body: formData,
+        headers: {
+
+          'X-CSRFToken': getCookie('csrftoken')// getCookie - вернет тот параметр который мы запросим, в данном случае она возвращает csrf - токен
+        },
+      })
+        .then(response => location.reload())  // promise - действия которые выполняются раз за разом.
+        .catch(error => console.error(error))
+
+    }
+    let toggleReplyButtons = document.querySelectorAll('.reply-btn')
+
+    toggleReplyButtons.forEach((button) => {
+      button.onclick = () => {
+        let replies = document.getElementById('reply-' + button.id)
+        if  (! replies.classList.contains("hidden")){
+          button.textContent = 'Показать ответы'
+        }
+        else {
+          button.textContent = 'Скрыть ответы'
+        }
+        replies.classList.toggle('hidden')
+      }
+    })
   </script>
+  <!-- 1) нажатие кнопки
+2) передача идентификатора комментария
+3) поиск комментария по переданному идентификатору
+4) извлечение текста 
+5) вставка текста в форму редактирования
+6) открытие модалки внутри которой находится форма редактирования -->
+
   {% endblock %}
+
+
 
 
 
@@ -168,46 +352,23 @@
   <!-- Поставиили условие проверки совпадение автора и пользователя. Пользователь должен 
   редактировать только свой пост -->
 
-  <!-- {{comment.created_at|date:"d.m.Y h:i"}} - Форматирование даты и добавление времени -->
 
-  <!--  <input type="hidden" name="post" value="{{post.pk}}"> - Это скрытый input который сохраняет  
-    id поста под которым пишется комментарий  -->
-
-
-
-  <!--  <div class="post-buttons">
-      <a href="{% url 'app:post_like' post.pk %}" class="post-button {% if user in post.likes.all %} primary {% endif %}">
-        <ion-icon name="thumbs-up-outline"></ion-icon>  ------  кнопка лайка и функция для того что бы лайк отмечался -->
-  <!-- {{post.likes.count}} Выводит кол-во лайкнувших людей -->
-
-
-
-  <!-- Кнопки показать и скрыть ответы 
-   
-
-  
-  {% block script %}
-  <script>
-   let buttons = document.querySelectorAll('.reply-btn')
-   buttons.forEach((button) => {
-    button.onclick = () => {
-     let replies = document.getElementById('comment-' + button.id)
-     if (replies.classList.contains('hidden')){
-      button.textContent = 'Скрыть ответы'
-      
-     }
-     else{
-      button.textContent = 'Показать ответы'
-     }
-     replies.classList.toggle('hidden') 
-    }
-   })
+  <!-- <script>
+    let deleteButtons = document.querySelectorAll('.comment-delete')
+    let modal = document.querySelector('.modal.delete')
+    deleteButtons.forEach(function(btn){
+      btn.onclick=function(btn){
+        console.log(modal)
+      }
+    })
   </script>
-  {% endblock %}
-
-
-
   
-  
-  
+  1. Вытаскиваем кнопки удаления
+  2. Ищем модальное окно подтверждения удаления
+  3. Делаем цикл по кнопкам(forEach)
+  4. И каждой кнопке устанавливаем обработчик нажатия(onclick)
+  5. При нажатии показываем модальное окно
+  6. По умолчанию на кнопку закрытия модалки и кнопку отмены действия устанавливаем функцию скрытия модального
+  окна.
+  7. 
   -->

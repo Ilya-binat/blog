@@ -28,6 +28,13 @@ from django.contrib.auth.decorators import login_required #Декаратор - 
 #главную страницу, чтобы увидеть только что созданный пост
 # Все что касается создания поста выполняет функция создания поста, а когда происходит перенаправление пользователя
 # То срабатывает функция home()
+
+# ORM - специальный механизм в Django, коорый предоставляет возможность писать python код,
+# для рботы с базой данных 
+
+# get() - вернет первый подходящий элемент
+# filter() - вернет все элементы которые подходят по условию 
+
 def home(request):
     posts = Post.objects.all()
     return render(request, 'home.html', {'posts':posts}) #  Функция открытия нашей стратовой транице
@@ -35,10 +42,9 @@ def home(request):
 
 def post(request, pk):
     post_detail = get_object_or_404(Post, pk=pk)
+    comments = Comment.objects.filter(post = pk, parent = None)
     form = CommentForm()# создали переменную form в которую передали форму для создания комментария
-    comments = Comment.objects.filter(post=post_detail.pk, parent=None)
-    replies = Comment.objects.filter()
-    return render(request, 'post.html', {'post':post_detail, 'form':form, 'comments': comments})# Для работы формы создания комментариев мы добавили GET запрос
+    return render(request, 'post.html', {'post':post_detail, 'form':form, 'comments':comments})# Для работы формы создания комментариев мы добавили GET запрос
 
 @login_required(login_url="users:log_in")# Установили декаратор для проверки авторизации перед созданием поста
 def create_post(request):
@@ -67,8 +73,9 @@ def edit_post(request, pk):
     post = Post.objects.get(pk=pk) # поиск нужного поста в базе с помощью функции get()
     form = PostForm(request.POST or None, instance=post) # Передаем информацию поста в форму. request.POST or None
      #передается для того чтобы, мы могли увидеть форму с информацией поста и могли этот пост тут же изменить.
+     #inctance - отвечает за отображние текста который в него передается
     if post.author != request.user:
-        return render(request,'403.html') # Поставили условие, которое возвращает нас на страницу 
+        return redirect('users:log_in') # Поставили условие, которое возвращает нас на страницу 
     #входа если пользователь пытается отредактироать не свой пост
     
     if request.method == 'POST':
@@ -76,130 +83,104 @@ def edit_post(request, pk):
         return redirect('app:post', pk=pk)
     return render(request, 'create_post.html', {'form':form})
 
-
+@login_required(login_url="users:log_in")
 def comment_create(request):
     form = CommentForm(request.POST)
 
     if form.is_valid():
         post_data = get_object_or_404(Post, pk=request.POST['post'])
-        comment = form.save(commit=False)# приостанавливаем сохранение комментариев, чтобы указать автора и пост
+        comment = form.save(commit=False)#commit=False - приостанавливает сохранение данных с формы, для того чтобы дополнить информацию автором и постом под которым пишется комментарий
         comment.author = request.user
         comment.post = post_data
         comment.save()
 
         return redirect('app:post', pk=request.POST['post'])
-        
-       
+    
+
 @login_required(login_url='users:log_in')
 def comment_delete(request, pk):
     comment = Comment.objects.get(pk=pk)
 
-    if request.user != comment.author:
-        return render(request, '403.html')
-
-
-    if request.method == 'POST':
+    if request.method=='POST':
         comment.delete()
-        return redirect('app:post', pk=comment.post.pk)#достаем первичный ключ поста под которым был написан этот комментарий
-    return render(request, 'comment_delete.html', {'comment':comment})
+
+        return redirect('app:post', pk=comment.post.pk)#pk=comment.post.pk - из коментария достаем его пост. А если написать pk = pk, то мы говорим что первичный ключ поста = первичному посту коментария, а это не так.
+        
 
 
 @login_required(login_url='users:log_in')
-def comment_edit(request, pk):
+def comment_like(request, pk):
     comment = Comment.objects.get(pk=pk)
-    form = CommentForm(request.POST or None, instance = comment)# передается текущи коментарий в форме
+
+    if request.user not in comment.likes.all():
+        comment.likes.add(request.user)
+        comment.dislikes.remove(request.user)
+
+    elif request.user in comment.likes.all():
+        comment.likes.remove(request.user)
+    
+
+
+    return redirect('app:post', pk = comment.post.pk)
+
+@login_required(login_url='users:log_in')
+def comment_dislike(request, pk):
+    comment = Comment.objects.get(pk=pk)
+
+    if request.user not in comment.dislikes.all():
+        comment.dislikes.add(request.user)
+        comment.likes.remove(request.user)
+
+    elif request.user in comment.dislikes.all():
+        comment.dislikes.remove(request.user)
+
+    return redirect('app:post', pk = comment.post.pk)
+
+@login_required(login_url='users:log_in')
+def comment_edit(request, pk):
+  
+    comment = Comment.objects.get(pk=pk)
+    form = CommentForm(request.POST or None, instance=comment)
 
     if comment.author != request.user:
         return render(request, '403.html')
 
     if form.is_valid():
-        edited_comment = form.save(commit = False)
-        edited_comment.is_updated = True
-        comment.save()
-        return redirect('app:post', pk=comment.post.pk)
-    return render(request, 'comment_edit.html', {'comment':comment, 'form':form})
-    
-    
+        form.save()
+
+    return redirect('app:post', pk = comment.post.pk)  
+ 
 @login_required(login_url='users:log_in')
-def post_like(request, pk):
-    post_object = Post.objects.get(pk=pk)# вытащили конкретный пост, под которым хотим оставить лайк. с соответствующим pk
+def comment_reply(request, pk):
     
-    if request.user not in post_object.likes.all():
-        post_object.likes.add(request.user)# ставим лайк
-        post_object.dislikes.remove(request.user)# если стоит лайк убираем дизлайк
-    elif request.user in post_object.likes.all():
-        post_object.likes.remove(request.user) # Если пользователь повторно ставит лайк, то убираем лайк
-        
-
-    
-    
-    return redirect('app:post', pk=post_object.pk)
-
-
-@login_required(login_url='users:log_in')   
-def post_dislike(request, pk):
-    post_object = Post.objects.get(pk=pk)# вытащили конкретный пост, под которым хотим оставить лайк. с соответствующим pk
-
-    if request.user not in post_object.dislikes.all():
-        post_object.dislikes.add(request.user) # Ставим дизлайк
-        post_object.likes.remove(request.user) # Если стоит лайк убираем дизлайк
-    elif request.user in post_object.dislikes.all():
-        post_object.dislikes.remove(request.user) # Если пользователь повторно ставит дизлайк, то убираем дизлайк
-    
-    return redirect('app:post', pk=post_object.pk)
-
-
-@login_required(login_url='users:log_in')
-def comment_like(request, pk):
-    comment_object = Comment.objects.get(pk=pk)
-
-    if request.user not in comment_object.likes.all():
-        comment_object.likes.add(request.user)
-        comment_object.dislikes.remove(request.user)
-    elif request.user in comment_object.likes.all():
-        comment_object.likes.remove(request.user)
-
-    return redirect('app:post', pk=comment_object.post.pk)
-
-@login_required(login_url='users:log_in')
-def comment_dislike(request, pk):
-    comment_object = Comment.objects.get(pk=pk)
-
-    if request.user not in comment_object.dislikes.all():
-        comment_object.dislikes.add(request.user)
-        comment_object.likes.remove(request.user)
-    elif request.user in comment_object.dislikes.all():
-        comment_object.dislikes.remove(request.user)
-
-    return redirect('app:post', pk=comment_object.post.pk)
-
-
-@login_required(login_url='users:log_in')
-def reply(request, pk):
+    comment = Comment.objects.get(pk = pk)
     form = CommentForm(request.POST or None)
-    comment = Comment.objects.get(pk=pk) # Создали переменную, что бы можно было вернуться назад
+   
+    if form.is_valid():
+        if comment.parent is None:
+            parent_comment = comment
+        else:
+            parent_comment = comment.parent
+        
+        reply_to = comment
+        instance = form.save(commit=False)
+        instance.parent = parent_comment
+        instance.reply_to = reply_to
+        instance.post = parent_comment.post
+        instance.author = request.user
+        instance.save()
 
-    if form.is_valid():# form это класс, is_valid - встроенный метод
-        parent_comment = comment.parent if comment.parent else comment# До этого работала функция Comment.object.get(pk=pk), которая добавляла 
-        #в качестве родителя коммент на который мы ответили. Мы заменили это на добавление, в качестве родителя только верхнего коментария
-        #с помощью условия  IF..... ELSE..... При добавление ответа мы проверяем есть ли родительский комментарий, у коментария
-        #на который мы сейчас отвечаем. Если есть, то в качестве родителя мы указываем не текущий комментарий, а его предшественника. 
-        #Если мы пишем ответ первыми, то в качестве родителя мы берем коммент, на который мы отвечаем. 
-        instance = form.save(commit=False)#Приостанавливаем сохрвнение для того что бы дополнить данные 
+    return redirect('app:post', pk = comment.post.pk)     
+    
 
-        instance.author = request.user# Указываем автора
-        instance.post = parent_comment.post# Указываем пост,он доступен через родительский комментарий
-        instance.parent = parent_comment#Указываем роителя, тоесть коментарий к которому пишем ответ
-        instance.save() # Сохраняем форму
-
-        return redirect('app:post', pk = parent_comment.post.pk)
-
-
-
-
-    return render(request, 'comment_edit.html', {'form':form, 'comment':comment})
-
+    
+  
   
 
-# Create your views here.
+
+
+# POST запрос - подрузомевает сздание новой информации
+
+
+
 

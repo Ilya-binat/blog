@@ -1,6 +1,9 @@
 {% extends 'layout.html' %}
 {% block content %}
 <div class="container">
+    {% if not posts %}
+    <div class="title">Посты не найдены</div>
+    {% endif %}
     {% for post in posts %}
     <a class="post" href="{% url 'app:post' post.id %}">
         <div>
